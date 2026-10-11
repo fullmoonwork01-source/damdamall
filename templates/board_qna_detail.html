@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ post['title'] }} - {{ brand_name }}{% endblock %}
+{% block content %}
+  <div class="breadcrumb"><a href="{{ url_for('board_qna_list') }}">Q&amp;A 게시판</a> &rsaquo; {{ post['category'] }}</div>
+
+  <div class="card" style="max-width:720px;">
+    <div class="section-title">
+      <div>
+        <span class="tag">{{ post['category'] }}</span>
+        {% if post['is_secret'] %}<span class="tag badge-secret">🔒 비밀글</span>{% endif %}
+        <h2 style="margin-top:8px;">{{ post['title'] }}</h2>
+        <p class="muted" style="margin:0;">{{ post['nickname'] }} · {{ post['created_at'] }}</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <p class="user-content">{{ post['content']|safe }}</p>
+
+    <div class="list-actions" style="margin-top:16px;">
+      {% if current_user and current_user['id'] == post['author_id'] %}
+        <a href="{{ url_for('board_qna_edit', post_id=post['id']) }}" class="btn btn-sm btn-outline">수정</a>
+        <form method="post" action="{{ url_for('board_qna_delete', post_id=post['id']) }}">
+          <button type="submit" class="btn btn-sm btn-outline">삭제</button>
+        </form>
+      {% endif %}
+      {% if current_user %}
+        <form method="post" action="{{ url_for('board_qna_report', post_id=post['id']) }}">
+          <button type="submit" class="btn btn-sm btn-outline">신고</button>
+        </form>
+      {% endif %}
+    </div>
+
+    <hr class="divider">
+
+    {% if post['answer'] %}
+      <div style="background:var(--brand-primary-light); border-radius:10px; padding:14px;">
+        <strong>운영팀 답변</strong>
+        <p style="margin:6px 0 0;">{{ post['answer'] }}</p>
+      </div>
+    {% else %}
+      <p class="muted">아직 답변이 등록되지 않았습니다.</p>
+    {% endif %}
+
+    {% if current_user and current_user['is_admin'] %}
+      <form method="post" action="{{ url_for('board_qna_answer', post_id=post['id']) }}" style="margin-top:16px;">
+        <div class="form-group">
+          <label>관리자 답변 등록</label>
+          <textarea name="answer" placeholder="답변을 입력하세요">{{ post['answer'] }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">답변 등록</button>
+      </form>
+    {% endif %}
+  </div>
+
+  {% if not post['is_secret'] %}
+    <div class="card" style="max-width:720px; margin-top:16px;">
+      <div class="section-title"><h2>댓글 ({{ comments|length }})</h2></div>
+
+      {% if current_user %}
+        <form method="post" action="{{ url_for('board_qna_comment', post_id=post['id']) }}" style="margin-bottom:16px;">
+          <div class="form-group" style="margin-bottom:8px;">
+            <textarea name="content" rows="2" placeholder="댓글을 남겨보세요" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm">댓글 등록</button>
+        </form>
+      {% else %}
+        <p class="muted"><a href="{{ url_for('login') }}">로그인</a> 후 댓글을 남길 수 있습니다.</p>
+      {% endif %}
+
+      {% if comments %}
+        {% for c in comments %}
+          <div class="list-row">
+            <div class="list-avatar">{{ c['nickname'][0] }}</div>
+            <div class="list-body">
+              <div class="list-head">
+                <div class="who"><strong>{{ c['nickname'] }}</strong></div>
+                <div class="list-time">{{ c['created_at'] }}</div>
+              </div>
+              <div class="list-content user-content">{{ c['content']|safe }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="muted">아직 댓글이 없습니다.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

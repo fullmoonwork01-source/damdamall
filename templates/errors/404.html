@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}페이지를 찾을 수 없습니다 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <div class="empty-state">
+    <div class="icon">😵</div>
+    <h2>페이지를 찾을 수 없습니다</h2>
+    <p class="muted">요청하신 페이지가 존재하지 않거나 삭제되었습니다.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary" style="margin-top:12px;">홈으로 이동</a>
+  </div>
+{% endblock %}

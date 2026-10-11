@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}{{ product['name'] }} - {{ brand_name }}{% endblock %}
+{% block content %}
+  <div class="breadcrumb">
+    <a href="{{ url_for('products_list') }}">전체 상품</a> &rsaquo;
+    <a href="{{ url_for('products_list', category=product['category']) }}">{{ product['category'] }}</a> &rsaquo;
+    {{ product['name'] }}
+  </div>
+
+  <div class="card" style="display:flex; gap:32px; flex-wrap:wrap;">
+    <img src="{{ url_for('placeholder_img', seed_key=product['id']) }}" alt="{{ product['name'] }}"
+         style="width:340px; max-width:100%; border-radius:14px;">
+    <div style="flex:1; min-width:260px;">
+      <span class="cat-badge">{{ product['category'] }}</span>
+      <h1>{{ product['name'] }}</h1>
+      <p class="muted">{{ product['description'] }}</p>
+      <hr class="divider">
+      <p style="font-size:26px; font-weight:800; color:var(--text-strong);">{{ "{:,}".format(product['price']) }}원</p>
+      {% if product['stock'] == 0 %}
+        <p class="stock-badge">품절된 상품입니다.</p>
+      {% else %}
+        <p class="muted">재고 {{ product['stock'] }}개</p>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('cart_add') }}" style="display:flex; gap:8px; margin-top:16px;">
+        <input type="hidden" name="product_id" value="{{ product['id'] }}">
+        <input type="number" name="quantity" value="1" min="1" style="width:80px;">
+        <button type="submit" class="btn btn-primary" {{ 'disabled' if product['stock'] == 0 }}>장바구니 담기</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= 리뷰 ================= -->
+  <div class="card" style="margin-top:24px;" id="review">
+    <div class="section-title"><h2>리뷰 ({{ reviews|length }})</h2></div>
+
+    {% if current_user %}
+      <form method="post" action="{{ url_for('add_review', pid=product['id']) }}" style="margin-bottom:24px;">
+        <div class="form-group">
+          <label>별점</label>
+          <select name="rating">
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="1">★☆☆☆☆</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>리뷰 내용</label>
+          <textarea name="content" placeholder="상품 사용 후기를 남겨주세요" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">리뷰 등록</button>
+      </form>
+    {% else %}
+      <p class="muted"><a href="{{ url_for('login') }}">로그인</a> 후 리뷰를 작성할 수 있습니다.</p>
+    {% endif %}
+
+    {% if reviews %}
+      {% for r in reviews %}
+        <div class="list-row">
+          <div class="list-avatar">{{ r['nickname'][0] }}</div>
+          <div class="list-body">
+            <div class="list-head">
+              <div class="who">
+                <strong>{{ r['nickname'] }}</strong>
+                <span class="star">{{ '★' * r['rating'] }}{{ '☆' * (5 - r['rating']) }}</span>
+                {% if r['reported'] %}<span class="tag badge-reported">신고 접수됨</span>{% endif %}
+              </div>
+              <div class="list-time">{{ r['created_at'] }}</div>
+            </div>
+            <div class="list-content user-content">{{ r['content']|safe }}</div>
+            <div class="list-actions">
+              {% if current_user and current_user['id'] == r['user_id'] %}
+                <form method="post" action="{{ url_for('delete_review', rid=r['id']) }}">
+                  <button type="submit" class="btn btn-sm btn-outline">삭제</button>
+                </form>
+              {% endif %}
+              {% if current_user %}
+                <form method="post" action="{{ url_for('report_review', rid=r['id']) }}">
+                  <button type="submit" class="btn btn-sm btn-outline">신고</button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="muted">아직 등록된 리뷰가 없습니다. 첫 리뷰를 남겨보세요!</p>
+    {% endif %}
+  </div>
+
+  <!-- ================= Q&A ================= -->
+  <div class="card" style="margin-top:24px; text-align:center;">
+    <p class="muted" style="margin:0;">
+      이 상품에 대해 궁금한 점이 있으신가요?
+      <a href="{{ url_for('board_qna_write') }}">Q&amp;A 게시판</a>에 문의를 남겨주세요.
+    </p>
+  </div>
+{% endblock %}

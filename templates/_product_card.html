@@ -1,0 +1,15 @@
+<a href="{{ url_for('product_detail', pid=p['id']) }}" class="product-card" style="display:block;">
+  <div class="thumb">
+    <img src="{{ url_for('placeholder_img', seed_key=p['id']) }}" alt="{{ p['name'] }}">
+  </div>
+  <div class="info">
+    <span class="cat-badge">{{ p['category'] }}</span>
+    <p class="name">{{ p['name'] }}</p>
+    <p class="price">{{ "{:,}".format(p['price']) }}원</p>
+    {% if p['stock'] == 0 %}
+      <span class="stock-badge">품절</span>
+    {% elif p['stock'] <= 3 %}
+      <span class="stock-badge">재고 {{ p['stock'] }}개 남음</span>
+    {% endif %}
+  </div>
+</a>

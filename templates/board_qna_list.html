@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Q&amp;A 게시판 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <div class="section-title">
+    <h1>Q&amp;A 게시판</h1>
+    {% if current_user %}
+      <a href="{{ url_for('board_qna_write') }}" class="btn btn-primary btn-sm">문의 작성</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">로그인 후 작성</a>
+    {% endif %}
+  </div>
+  <p class="muted" style="margin-top:-8px;">상품과 상관없이 배송, 환불, 회원, 주문 등 궁금하신 점을 자유롭게 남겨주세요.</p>
+
+  <div class="card" style="margin-top:16px;">
+    {% if posts %}
+      {% for p in posts %}
+        <div class="list-row">
+          <div class="list-avatar">{{ p['nickname'][0] }}</div>
+          <div class="list-body">
+            <div class="list-head">
+              <div class="who">
+                <span class="tag">{{ p['category'] }}</span>
+                <a href="{{ url_for('board_qna_detail', post_id=p['id']) }}">
+                  <strong>
+                    {% if p['is_secret'] %}🔒 {% endif %}{{ p['title'] }}
+                  </strong>
+                </a>
+                {% if p['answer'] %}<span class="tag badge-answered">답변완료</span>{% endif %}
+                {% if p['reported'] %}<span class="tag badge-reported">신고 접수됨</span>{% endif %}
+              </div>
+              <div class="list-time">{{ p['nickname'] }} · {{ p['created_at'] }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">💬</div>
+        <p>아직 등록된 문의가 없습니다. 첫 문의를 남겨보세요!</p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

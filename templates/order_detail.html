@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}주문 상세 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <h1>주문 #{{ order['id'] }}</h1>
+  <div class="card">
+    <p class="muted">주문자: {{ buyer['nickname'] }} ({{ buyer['email'] }})</p>
+    <p class="muted">주문일: {{ order['created_at'] }} · 상태: {{ order['status'] }}</p>
+    <p class="muted">배송지: {{ order['address'] }}</p>
+    <p class="muted">결제수단: {{ order['payment_method'] }}</p>
+
+    <hr class="divider">
+    <div class="table-scroll"><table>
+      <thead><tr><th>상품</th><th>수량</th><th>금액</th></tr></thead>
+      <tbody>
+        {% for it in items %}
+          <tr>
+            <td>{{ it['product_name'] }}</td>
+            <td>{{ it['quantity'] }}</td>
+            <td>{{ "{:,}".format(it['price'] * it['quantity']) }}원</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table></div>
+
+    <div style="text-align:right; margin-top:16px;">
+      <p class="muted">할인 -{{ "{:,}".format(order['discount']) }}원</p>
+      <h2>총 {{ "{:,}".format(order['total_price']) }}원</h2>
+    </div>
+
+    {% if order['invoice_file'] %}
+      <a href="{{ url_for('download_file', file=order['invoice_file']) }}" class="btn btn-outline">거래명세서 다운로드</a>
+    {% endif %}
+  </div>
+{% endblock %}

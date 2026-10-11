@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}상품 검색 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <div class="section-title">
+    <h1>{% if q %}'{{ q }}' 검색 결과{% elif selected_category %}{{ selected_category }}{% else %}전체 상품{% endif %}</h1>
+    <span class="muted">{{ products|length }}개 상품</span>
+  </div>
+
+  {% if error_message %}
+    <div class="card" style="border:1px solid var(--brand-error); margin-bottom:var(--space-5);">
+      <p style="color:var(--brand-error); margin:0; font-family:monospace; font-size:13px;">{{ error_message }}</p>
+    </div>
+  {% endif %}
+
+  {% if products %}
+    <div class="product-grid">
+      {% for p in products %}
+        {% include "_product_card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="icon">🔍</div>
+      <p>검색 결과가 없습니다. 다른 검색어를 입력해보세요.</p>
+    </div>
+  {% endif %}
+{% endblock %}

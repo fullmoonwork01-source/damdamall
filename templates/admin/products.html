@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}상품 관리 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <h1>상품 관리</h1>
+  {% include "admin/_nav.html" %}
+  <div class="section-title">
+    <span></span>
+    <a href="{{ url_for('admin_add_product') }}" class="btn btn-primary btn-sm">+ 상품 등록</a>
+  </div>
+  <div class="card">
+    <div class="table-scroll"><table>
+      <thead><tr><th>ID</th><th>상품명</th><th>카테고리</th><th>가격</th><th>재고</th><th></th></tr></thead>
+      <tbody>
+        {% for p in products %}
+          <tr>
+            <td>{{ p['id'] }}</td>
+            <td>{{ p['name'] }}</td>
+            <td>{{ p['category'] }}</td>
+            <td>{{ "{:,}".format(p['price']) }}원</td>
+            <td>
+              <form method="post" action="{{ url_for('admin_adjust_stock', pid=p['id']) }}" style="display:flex; gap:4px;">
+                <input type="number" name="stock" value="{{ p['stock'] }}" style="width:70px;">
+                <button type="submit" class="btn btn-sm btn-outline">저장</button>
+              </form>
+            </td>
+            <td style="display:flex; gap:6px;">
+              <a href="{{ url_for('admin_edit_product', pid=p['id']) }}" class="btn btn-sm btn-outline">수정</a>
+              <form method="post" action="{{ url_for('admin_delete_product', pid=p['id']) }}">
+                <button type="submit" class="btn btn-sm btn-outline">삭제</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}주문내역 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <h1>주문내역</h1>
+  {% if orders %}
+    <div class="card">
+      <div class="table-scroll"><table>
+        <thead><tr><th>주문번호</th><th>주문일</th><th>상태</th><th>금액</th><th></th></tr></thead>
+        <tbody>
+          {% for o in orders %}
+            <tr>
+              <td>#{{ o['id'] }}</td>
+              <td>{{ o['created_at'] }}</td>
+              <td>{{ o['status'] }}</td>
+              <td>{{ "{:,}".format(o['total_price']) }}원</td>
+              <td><a href="{{ url_for('order_detail', oid=o['id']) }}" class="btn btn-sm btn-outline">상세보기</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table></div>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="icon">📦</div>
+      <p>주문 내역이 없습니다.</p>
+      <a href="{{ url_for('products_list') }}" class="btn btn-primary" style="margin-top:12px;">쇼핑 시작하기</a>
+    </div>
+  {% endif %}
+{% endblock %}

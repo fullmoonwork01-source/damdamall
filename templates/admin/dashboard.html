@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}관리자 대시보드 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <h1>관리자 대시보드</h1>
+  {% include "admin/_nav.html" %}
+  <div class="grid-stats">
+    <div class="card"><p class="muted">전체 회원</p><h2>{{ stats.users }}명</h2></div>
+    <div class="card"><p class="muted">전체 상품</p><h2>{{ stats.products }}개</h2></div>
+    <div class="card"><p class="muted">전체 주문</p><h2>{{ stats.orders }}건</h2></div>
+    <div class="card"><p class="muted">신고된 리뷰</p><h2>{{ stats.reported_reviews }}건</h2></div>
+  </div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ brand_name }} - 오늘도 득템하는 하루{% endblock %}
+{% block content %}
+  <div class="promo-banner">
+    <div class="promo-text">
+      <h2>여름맞이 최대 30% 할인</h2>
+      <p>쿠폰 코드 <strong>SUMMER20</strong> 을 장바구니에서 입력해보세요.</p>
+    </div>
+    <a href="{{ url_for('products_list') }}" class="btn" style="background:#fff;color:var(--brand-primary);">지금 쇼핑하기</a>
+  </div>
+
+  <div class="section-title">
+    <h2>오늘의 추천 상품</h2>
+    <a href="{{ url_for('products_list') }}" class="muted">전체보기 &rarr;</a>
+  </div>
+
+  {% if products %}
+    <div class="product-grid">
+      {% for p in products %}
+        {% include "_product_card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="icon">🛍️</div>
+      <p>아직 등록된 상품이 없습니다.</p>
+    </div>
+  {% endif %}
+{% endblock %}

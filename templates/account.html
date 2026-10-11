@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}마이페이지 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <h1>마이페이지</h1>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>프로필</h2>
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:16px;">
+        {% if current_user['avatar_path'] %}
+          <img src="{{ url_for('uploaded_file', filename=current_user['avatar_path']) }}"
+               alt="프로필 사진" style="width:64px; height:64px; border-radius:50%; object-fit:cover; background:#eee;">
+        {% else %}
+          <div style="width:64px; height:64px; border-radius:50%; background:var(--brand-primary-light);"></div>
+        {% endif %}
+        <div>
+          <strong>{{ current_user['nickname'] }}</strong>
+          <p class="muted" style="margin:0;">{{ current_user['email'] }} · 포인트 {{ "{:,}".format(current_user['points']) }}P</p>
+        </div>
+      </div>
+
+      <form method="post" action="{{ url_for('account_update') }}">
+        <input type="hidden" name="user_id" value="{{ current_user['id'] }}">
+        <div class="form-group">
+          <label>닉네임</label>
+          <input type="text" name="nickname" value="{{ current_user['nickname'] }}">
+        </div>
+        <div class="form-group">
+          <label>자기소개</label>
+          <textarea name="bio">{{ current_user['bio'] }}</textarea>
+        </div>
+        <div class="form-group">
+          <label>기본 주소</label>
+          <input type="text" name="address" value="{{ current_user['address'] }}">
+        </div>
+        <button type="submit" class="btn btn-primary">프로필 저장</button>
+      </form>
+
+      <hr class="divider">
+
+      <form method="post" action="{{ url_for('upload_avatar') }}" enctype="multipart/form-data">
+        <label>프로필 사진 변경</label>
+        <div style="display:flex; gap:8px;">
+          <input type="file" name="avatar" accept=".png,.jpg,.jpeg,.gif" style="flex:1;">
+          <button type="submit" class="btn btn-outline">업로드</button>
+        </div>
+      </form>
+
+      <hr class="divider">
+
+      <form method="post" action="{{ url_for('change_password') }}">
+        <div class="form-group">
+          <label>새 비밀번호</label>
+          <input type="password" name="new_password" placeholder="변경할 비밀번호">
+        </div>
+        <button type="submit" class="btn btn-outline">비밀번호 변경</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h2>배송지 관리</h2>
+      </div>
+
+      {% if addresses %}
+        {% for a in addresses %}
+          <div style="padding:12px 0; border-bottom:1px solid var(--border-subtle);">
+            <div style="display:flex; justify-content:space-between;">
+              <div>
+                <strong>{{ a['recipient'] }}</strong>
+                {% if a['is_default'] %}<span class="tag">기본 배송지</span>{% endif %}
+                <p class="muted" style="margin:4px 0 0;">{{ a['phone'] }}<br>{{ a['address'] }}</p>
+              </div>
+              <div style="display:flex; gap:6px; align-items:flex-start;">
+                <a href="{{ url_for('view_address', addr_id=a['id']) }}" class="btn btn-sm btn-outline">보기</a>
+                <form method="post" action="{{ url_for('delete_address', addr_id=a['id']) }}">
+                  <button type="submit" class="btn btn-sm btn-outline">삭제</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="muted">등록된 배송지가 없습니다.</p>
+      {% endif %}
+
+      <hr class="divider">
+      <form method="post" action="{{ url_for('add_address') }}">
+        <div class="form-group"><label>받는 사람</label><input type="text" name="recipient" required></div>
+        <div class="form-group"><label>연락처</label><input type="text" name="phone" required></div>
+        <div class="form-group"><label>주소</label><input type="text" name="address" required></div>
+        <label class="checkbox-row"><input type="checkbox" name="is_default"> 기본 배송지로 설정</label>
+        <button type="submit" class="btn btn-primary" style="margin-top:12px;">배송지 추가</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

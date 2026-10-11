@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}공지사항 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <div class="section-title">
+    <h1>공지사항</h1>
+    {% if current_user and current_user['is_admin'] %}
+      <a href="{{ url_for('notice_write') }}" class="btn btn-primary btn-sm">공지 작성</a>
+    {% endif %}
+  </div>
+  <p class="muted" style="margin-top:-8px;">{{ brand_name }}의 새로운 소식과 안내사항을 확인하세요.</p>
+
+  <div class="card" style="margin-top:16px;">
+    {% if notices %}
+      {% for n in notices %}
+        <div class="list-row">
+          <div class="list-avatar">📢</div>
+          <div class="list-body">
+            <div class="list-head">
+              <div class="who">
+                <a href="{{ url_for('notice_detail', notice_id=n['id']) }}">
+                  <strong>{{ n['title'] }}</strong>
+                </a>
+                {% if n['attachment'] %}<span class="tag">📎 첨부</span>{% endif %}
+              </div>
+              <div class="list-time">{{ n['nickname'] }} · {{ n['created_at'] }}</div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">📢</div>
+        <p>등록된 공지사항이 없습니다.</p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

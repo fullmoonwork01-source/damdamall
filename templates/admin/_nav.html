@@ -1,0 +1,7 @@
+<div class="admin-nav">
+  <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' }}">대시보드</a>
+  <a href="{{ url_for('admin_users') }}" class="{{ 'active' if request.endpoint == 'admin_users' }}">회원 관리</a>
+  <a href="{{ url_for('admin_products') }}" class="{{ 'active' if request.endpoint in ['admin_products','admin_add_product','admin_edit_product'] }}">상품 관리</a>
+  <a href="{{ url_for('admin_orders') }}" class="{{ 'active' if request.endpoint == 'admin_orders' }}">주문 관리</a>
+  <a href="{{ url_for('admin_reported') }}" class="{{ 'active' if request.endpoint == 'admin_reported' }}">신고/문의 관리</a>
+</div>

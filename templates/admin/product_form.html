@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ '상품 수정' if product else '상품 등록' }} - {{ brand_name }}{% endblock %}
+{% block content %}
+  <h1>{{ '상품 수정' if product else '상품 등록' }}</h1>
+  {% include "admin/_nav.html" %}
+  <div class="card" style="max-width:520px;">
+    <form method="post">
+      <div class="form-group">
+        <label>상품명</label>
+        <input type="text" name="name" value="{{ product['name'] if product else '' }}" required>
+      </div>
+      <div class="form-group">
+        <label>설명</label>
+        <textarea name="description">{{ product['description'] if product else '' }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>카테고리</label>
+        <select name="category">
+          {% for c in categories %}
+            <option value="{{ c['name'] }}" {{ 'selected' if product and product['category'] == c['name'] }}>{{ c['name'] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>가격</label>
+        <input type="number" name="price" value="{{ product['price'] if product else 0 }}">
+      </div>
+      <div class="form-group">
+        <label>재고</label>
+        <input type="number" name="stock" value="{{ product['stock'] if product else 0 }}">
+      </div>
+      <button type="submit" class="btn btn-primary">저장</button>
+    </form>
+  </div>
+{% endblock %}

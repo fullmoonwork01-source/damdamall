@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}공지 작성 - {{ brand_name }}{% endblock %}
+{% block content %}
+  <div class="breadcrumb"><a href="{{ url_for('notice_list') }}">공지사항</a> &rsaquo; 작성</div>
+  <h1>공지 작성</h1>
+
+  <div class="card" style="max-width:720px;">
+    <form method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>제목</label>
+        <input type="text" name="title" required>
+      </div>
+      <div class="form-group">
+        <label>내용</label>
+        <textarea name="content" rows="8" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>첨부파일</label>
+        <input type="file" name="attachment">
+      </div>
+      <button type="submit" class="btn btn-primary">등록하기</button>
+    </form>
+  </div>
+{% endblock %}
